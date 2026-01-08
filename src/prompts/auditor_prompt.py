@@ -28,3 +28,14 @@ Your analysis must be strict and critical. You do NOT fix the code. You only rep
 ### INPUT CODE:
 {code_content}
 """
+
+def generate_audit_prompt(messy_code_string: str) -> str:
+    """
+    Takes messy python code, inserts it into the system prompt,
+    and returns the full instruction string for the AI.
+    """
+    # This acts as a template filler. It looks for {code_content}
+    # in the big string and replaces it with the variable passed in.
+    formatted_prompt = AUDITOR_SYSTEM_PROMPT.format(code_content=messy_code_string)
+    
+    return formatted_prompt
