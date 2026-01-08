@@ -1,14 +1,14 @@
 [
     {
-        "id": "856800f1-3d04-4386-ad84-53130b055d62",
-        "timestamp": "2026-01-07T11:39:13.536511",
+        "id": "6c248e58-6285-4789-9c1c-24f92c42bab2",
+        "timestamp": "2026-01-08T09:02:36.795303",
         "agent": "System",
         "model": "STARTUP",
         "action": "CODE_ANALYSIS",
         "details": {
-            "input_prompt": "Test Startup",
-            "output_response": "Test startup.",
-            "extra_metadata": "target_dir was ~/Documents/refactoring-swarm-template/src"
+            "input_prompt": "Startup",
+            "output_response": "Startup initialized for target_dir: ./src",
+            "extra_metadata": "target_dir was /home/lyes/Documents/tp-igl-refactoring-swarm/src"
         },
         "status": "INFO"
     }
