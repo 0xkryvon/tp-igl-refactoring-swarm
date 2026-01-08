@@ -2,7 +2,7 @@ import argparse
 import sys
 import os
 from dotenv import load_dotenv
-from src.utils.logger import log_experiment
+from src.utils.logger import log_experiment,ActionType
 
 load_dotenv()
 
@@ -16,7 +16,12 @@ def main():
         sys.exit(1)
 
     print(f"🚀 DEMARRAGE SUR : {args.target_dir}")
-    log_experiment("System", "STARTUP", f"Target: {args.target_dir}", "INFO")
+    experiment_details = {
+        "input_prompt": "Test Startup",
+        "output_response": "Test startup.",
+        "extra_metadata": "target_dir was ~/Documents/refactoring-swarm-template/src"
+    }
+    log_experiment("System", "STARTUP", ActionType.ANALYSIS, experiment_details, "INFO")
     print("✅ MISSION_COMPLETE")
 
 if __name__ == "__main__":
