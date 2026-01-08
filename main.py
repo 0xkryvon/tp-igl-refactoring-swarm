@@ -11,8 +11,7 @@ def main():
     parser.add_argument("--target_dir", type=str, required=True)
     args = parser.parse_args()
 
-    # 1. Expand user (handle ~)
-    # 2. Convert to absolute path (resolve relative to CWD immediately)
+
     target_dir = os.path.abspath(os.path.expanduser(args.target_dir))
 
     # Debug print to see what Python is actually checking
