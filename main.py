@@ -12,17 +12,6 @@ def main():
     args = parser.parse_args()
 
 
-
-
-
-
-
-
-
-
-
-
-
     target_dir = os.path.abspath(os.path.expanduser(args.target_dir))
 
     # Debug print to see what Python is actually checking
