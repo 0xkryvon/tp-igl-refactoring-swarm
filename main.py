@@ -1,36 +1,99 @@
 import argparse
-import sys
 import os
-from dotenv import load_dotenv
-from src.utils.logger import log_experiment,ActionType
+import glob  # Added this to find files
+import time
+from langgraph.graph import StateGraph, END
 
-load_dotenv()
+# --- 🛑 YOUR RATE LIMIT PATCH 🛑 ---
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--target_dir", type=str, required=True)
-    args = parser.parse_args()
+original_invoke = ChatGoogleGenerativeAI.invoke
+
+def slow_invoke(self, *args, **kwargs):
+    print("⏳ Throttling: Waiting 5s to avoid Google Free Tier crash...")
+    time.sleep(5) 
+    return original_invoke(self, *args, **kwargs)
+
+ChatGoogleGenerativeAI.invoke = slow_invoke
 
 
-    target_dir = os.path.abspath(os.path.expanduser(args.target_dir))
+# Import Modules
+from src.state import SwarmState
+from src.agents.auditor import auditor_agent
+from src.agents.fixer import fixer_agent
+from src.agents.judge import judge_agent
 
-    # Debug print to see what Python is actually checking
-    print(f"🔍 CHECKING PATH: {target_dir}")
+# --- Logic Gates ---
+def decision_gate(state: SwarmState):
+    if state["iterations"] >= 10:
+        print("--- MAX ITERATIONS REACHED ---")
+        return END
+        
+    if state["success"]:
+        return END
+    else:
+        return "fixer" 
 
-    if not os.path.exists(target_dir):
-        print(f"❌ Dossier {target_dir} introuvable.")
-        sys.exit(1)
+# --- Graph Definition ---
+workflow = StateGraph(SwarmState)
 
-    print(f"🚀 DEMARRAGE SUR : {target_dir}")
+workflow.add_node("auditor", auditor_agent)
+workflow.add_node("fixer", fixer_agent)
+workflow.add_node("judge", judge_agent)
 
-    experiment_details = {
-        "input_prompt": "Startup",
-        "output_response": f"Startup initialized for target_dir: {args.target_dir}",
-        "extra_metadata": f"target_dir was {target_dir}"
-    }
+workflow.set_entry_point("auditor")
+workflow.add_edge("auditor", "fixer")
+workflow.add_edge("fixer", "judge")
 
-    log_experiment("System", "STARTUP", ActionType.ANALYSIS, experiment_details, "INFO")
-    print("✅ MISSION_COMPLETE")
+workflow.add_conditional_edges(
+    "judge",
+    decision_gate,
+    {END: END, "fixer": "fixer"}
+)
+
+app = workflow.compile()
+
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target_dir", required=True, help="Target directory containing the buggy code")
+    args = parser.parse_args()
+
+    search_path = os.path.join(args.target_dir, "*.py")
+    found_files = glob.glob(search_path)
+    
+    if not found_files:
+        print(f"❌ ERROR: No .py file found in {args.target_dir}")
+        exit(1)
+        
+    target_file = found_files[0]
+    print(f"Found target file: {target_file}")
+
+    with open(target_file, "r", encoding='utf-8') as f:
+        original_code = f.read()
+
+    print(f"STARTING REFACTORING SWARM on {target_file}")
+    
+    initial_state = {
+        "code": original_code, 
+        "refactoring_plan": "",
+        "error_logs": "",
+        "iterations": 0,
+        "success": False
+    }
+
+    try:
+
+        final_state = app.invoke(initial_state)
+        
+        print(f"\n WRITING FIXES TO {target_file}...")
+        
+        if final_state.get("code"):
+            with open(target_file, "w", encoding="utf-8") as f:
+                f.write(final_state["code"])
+            print("✅ File updated successfully.")
+            
+        print("\n✅ Mission Complete. Check 'logs/experiment_data.json'.")
+        
+    except Exception as e:
+        print(f"\n❌ System Error: {e}")
