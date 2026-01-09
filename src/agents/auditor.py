@@ -3,6 +3,7 @@ from src.llm import llm
 from src.state import SwarmState
 from src.utils.logger import log_experiment, ActionType
 from src.prompts.auditor_prompt import generate_audit_prompt
+
 def auditor_agent(state: SwarmState):
     """
     Role: Static Analysis and Planning.
