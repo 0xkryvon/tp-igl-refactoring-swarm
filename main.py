@@ -4,7 +4,7 @@ import glob  # Added this to find files
 import time
 from langgraph.graph import StateGraph, END
 
-# --- 🛑 YOUR RATE LIMIT PATCH 🛑 ---
+# --- YOUR RATE LIMIT PATCH ---
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 original_invoke = ChatGoogleGenerativeAI.invoke
