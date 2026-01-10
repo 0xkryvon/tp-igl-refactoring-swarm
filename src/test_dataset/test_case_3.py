@@ -1,5 +1,4 @@
 # Case 3: Code avec bugs logiques
-# Ce fichier s'exécute mais produit des résultats incorrects
 
 def divide(a, b):
     """Divise deux nombres"""

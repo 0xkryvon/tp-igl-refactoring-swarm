@@ -1,5 +1,4 @@
 # Case 2: Code avec erreurs de syntaxe
-# Ce fichier contient des erreurs qui empêchent l'exécution
 
 def add_numbers(x, y)  # Erreur: manque le ":"
     return x + y
