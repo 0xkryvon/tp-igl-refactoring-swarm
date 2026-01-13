@@ -1,6 +1,3 @@
-# Case 1: Code sans documentation et mauvaises pratiques
-
-
 def calcul(a, b):
     return a + b
 

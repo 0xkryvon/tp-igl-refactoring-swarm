@@ -1,25 +1,21 @@
-# Case 4: Mauvaises pratiques de programmation
-
-# Variables globales (mauvaise pratique)
 counter = 0
 data_list = []
 
 def increment():
     global counter
-    counter+=1  # Pas d'espaces
+    counter+=1
     return counter
 
-def fonction(x,y,z,a,b,c,d):  # Trop de paramètres
-    if x>0:  # Pas d'espaces
+def fonction(x,y,z,a,b,c,d):
+    if x>0:
         if y>0:
-            if z>0:  # Imbrication excessive
+            if z>0:
                 if a>0:
                     if b>0:
                         return c+d
     return 0
 
 def process(data):
-    # Noms de variables non descriptifs
     a=data
     b=[]
     for c in a:
@@ -30,16 +26,16 @@ def process(data):
             b.append(c)
     return b
 
-class myclass:  # Nom de classe non conforme (devrait être MyClass)
-    def __init__(self,x,y):  # Pas d'espaces après les virgules
+class myclass:
+    def __init__(self,x,y):
         self.x=x
         self.y=y
     
     def calc(self):
-        return self.x+self.y  # Pas d'espaces autour des opérateurs
+        return self.x+self.y
 
 def use_global():
-    return counter*2  # Utilise une variable globale
+    return counter*2
 
 def long_function(param1, param2, param3, param4, param5, param6, param7, param8):
     """Fonction avec trop de paramètres et trop longue"""
@@ -58,13 +54,11 @@ def long_function(param1, param2, param3, param4, param5, param6, param7, param8
         print("Greater than 25")
     else:
         print("Less than 25")
-    # Fonction trop longue, devrait être divisée
     temp = result * 2
     temp = temp + 10
     temp = temp / 2
     return temp
 
-# Code dupliqué
 def calculate_price_student(base_price):
     tax = base_price * 0.2
     discount = base_price * 0.1
@@ -73,13 +67,13 @@ def calculate_price_student(base_price):
 
 def calculate_price_teacher(base_price):
     tax = base_price * 0.2
-    discount = base_price * 0.15  # Seule différence
+    discount = base_price * 0.15
     final = base_price + tax - discount
     return final
 
 def calculate_price_admin(base_price):
     tax = base_price * 0.2
-    discount = base_price * 0.2  # Seule différence
+    discount = base_price * 0.2
     final = base_price + tax - discount
     return final
 
