@@ -20,11 +20,11 @@ Return ONLY the python code enclosed in a markdown code block. Do not add explan
 {audit_plan}
 """
   
-  def generate_fixer_prompt(code_content: str, audit_json_str: str) -> str:
-    """
-    Combines the bad code and the list of bugs into one instruction.
-    """
-    return FIXER_SYSTEM_PROMPT.format(
-        original_code=code_content,
-        audit_plan=audit_json_str
-    )
+def generate_fixer_prompt(code_content: str, audit_json_str: str) -> str:
+  """
+  Combines the bad code and the list of bugs into one instruction.
+  """
+  return FIXER_SYSTEM_PROMPT.format(
+      original_code=code_content,
+      audit_plan=audit_json_str
+  )

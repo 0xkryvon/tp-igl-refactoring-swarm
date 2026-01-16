@@ -53,11 +53,11 @@ def process_temperatures(temps):
     return fahrenheit
 
 def main():
-    print(divide(10, 0))  # Division par zéro
-    print(get_average([]))  # Liste vide
-    print(find_max([]))  # Liste vide
-    print(factorial(5))  # Résultat incorrect
-    print(factorial(0))  # Devrait retourner 1
+    print(divide(10, 0))
+    print(get_average([]))
+    print(find_max([]))
+    print(factorial(5))
+    print(factorial(0))
     
     account = BankAccount(100)
     account.withdraw(150)
