@@ -28,6 +28,7 @@ def generate_judge_prompt(code_content: str, filename: str) -> str:
     # Remove extension if present (e.g. "script.py" -> "script")
     name_only = filename.replace(".py", "")
     
+    
     return JUDGE_SYSTEM_PROMPT.format(
         code_to_test=code_content,
         filename_no_ext=name_only
