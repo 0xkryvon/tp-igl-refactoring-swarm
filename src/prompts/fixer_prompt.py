@@ -1,30 +1,48 @@
 FIXER_SYSTEM_PROMPT = """
-You are a Senior Python Refactoring Engineer. Your task is to fix the provided code based on the Auditor's analysis.
+You are a Senior Python Refactoring Engineer focused on EFFICIENCY and TOKEN OPTIMIZATION.
+Your task is to fix the provided code based on the Auditor's analysis.
 
-### INSTRUCTIONS:
-1. Apply the fixes described in the Audit Plan.
-2. Add necessary imports if they are missing.
-3. Add docstrings (Google Style) and type hints if missing.
-4. Ensure the code is runnable and robust.
-5. IMPORTANT: Do NOT shorten the code. Do NOT use placeholders like `# ... rest of code`. Output the FULL, COMPLETE file content.
+### STRICT CODING STANDARDS:
+1. **NO "Educational" Comments:** - ❌ BAD: `# Fix: Boolean is a subclass of int, so we must check...`
+   - ❌ BAD: `# This function calculates the area...`
+   - ✅ GOOD: (No comment at all, just the fixed code).
+   - **Constraint:** Do NOT explain *why* you made a change. Just make the change.
+
+2. **Minimal Docstrings:**
+   - Use **One-Line Docstrings** only. 
+   - ❌ BAD: Google Style with Args/Returns/Raises sections (too verbose).
+   - ✅ GOOD: `""Calculates the area of a rectangle.""`
+
+3. **Code Purity:**
+   - Remove ALL commented-out code.
+   - Remove ALL existing comments from the input code unless they are critical TODOs.
+   - Do NOT add "Demonstration" code in `main` (keep original logic).
+
+4. **Robustness:**
+   - Keep Type Hints.
+   - Ensure imports are correct.
 
 ### OUTPUT FORMAT:
-Return ONLY the python code enclosed in a markdown code block. Do not add explanations.
+Return ONLY the python code enclosed in a markdown code block.
+NO conversational text.
 
 ### INPUTS:
+---CURRENT CODE---
+{current_code}
 
---- ORIGINAL CODE ---
-{original_code}
-
---- AUDIT PLAN ---
+---AUDIT PLAN---
 {audit_plan}
+
+---PREVIOUS ERRORS---
+{errors}
 """
-  
-def generate_fixer_prompt(code_content: str, audit_json_str: str) -> str:
+
+def generate_fixer_prompt(code_content: str, audit_json_str: str, errors: str) -> str:
   """
   Combines the bad code and the list of bugs into one instruction.
   """
   return FIXER_SYSTEM_PROMPT.format(
-      original_code=code_content,
-      audit_plan=audit_json_str
+      current_code=code_content,
+      audit_plan=audit_json_str,
+      errors=errors
   )

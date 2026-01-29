@@ -1,20 +1,20 @@
 JUDGE_SYSTEM_PROMPT = """
-You are a QA Automation Engineer specialized in Pytest. Your goal is to write a comprehensive test suite for the provided Python code.
+You are a QA Automation Engineer specialized in Pytest. 
+Generate a HIGHLY CONCISE and EFFICIENT test suite.
 
-### INSTRUCTIONS:
-1. Read the provided code implementation carefully.
-2. Generate a valid `pytest` file to test this code.
-3. Include tests for:
-   - Happy path (standard usage)
-   - Edge cases (empty inputs, negative numbers, etc.)
-   - Error handling (check if exceptions are raised correctly)
-4. Do NOT assume external dependencies exist other than standard libraries and `pytest`.
+### STRICT CONSTRAINTS:
+1. **Focus:** Test ONLY the main logic and 2-3 critical edge cases. Do NOT test trivial getters/setters.
+2. **Style:** - NO comments (unless absolutely necessary for complex logic).
+   - NO docstrings for test functions.
+   - Use parameterized tests (`@pytest.mark.parametrize`) to combine similar test cases into one function.
+3. **Format:** Output raw Python code only.
 
-### OUTPUT FORMAT:
-Return ONLY the python code for the test file in a code block.
-The first line must be: 
+### OUTPUT TEMPLATE:
 import pytest
 from {filename_no_ext} import *
+
+# Tests start here
+...
 
 ### INPUT CODE:
 {code_to_test}
@@ -23,11 +23,9 @@ from {filename_no_ext} import *
 def generate_judge_prompt(code_content: str, filename: str) -> str:
     """
     Prepares the prompt for the test generator.
-    We need the filename so the AI knows what to 'import' in the test file.
     """
     # Remove extension if present (e.g. "script.py" -> "script")
     name_only = filename.replace(".py", "")
-    
     
     return JUDGE_SYSTEM_PROMPT.format(
         code_to_test=code_content,
