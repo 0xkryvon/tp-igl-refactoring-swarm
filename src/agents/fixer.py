@@ -1,4 +1,5 @@
 import os
+import time
 from langchain_core.messages import HumanMessage
 from src.llm import llm
 from src.state import SwarmState
@@ -15,6 +16,7 @@ def fixer_agent(state: SwarmState):
     """
     print("\n--- FIXER AGENT ---")
     
+    time.sleep(5)  # Simulate processing time
     # 1. Prepare Data
     current_code = state["code"]
     plan = state.get("refactoring_plan", "No plan provided")

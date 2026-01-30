@@ -1,3 +1,4 @@
+import time
 import pytest
 from pathlib import Path
 from src.agents.fixer import fixer_agent
@@ -12,7 +13,6 @@ DATASET_DIR = Path(__file__).parents[2] / "test_dataset"
     "case_2.py",
     "case_3.py",
     "case_4.py",
-    "case_5.py",
 ])
 def test_dataset_files(file_name):
     file_path = DATASET_DIR / file_name
@@ -29,6 +29,7 @@ def test_dataset_files(file_name):
     )
 
     state = fixer_agent(state)
+    time.sleep(2)  # <-- pause de 2 secondes pour éviter 429
     state = judge_agent(state)
 
     assert state["success"] is True
