@@ -4,6 +4,7 @@ from src.prompts.fixer_prompt import generate_fixer_prompt, FIXER_SYSTEM_PROMPT
 from src.prompts.judge_prompt import generate_judge_prompt, JUDGE_SYSTEM_PROMPT
 
 
+
 class TestAuditorPrompt:
     """Tests pour le prompt de l'Auditor"""
     
