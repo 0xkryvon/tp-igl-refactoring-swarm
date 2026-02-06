@@ -1,4 +1,5 @@
 import os
+import time
 from langchain_core.messages import HumanMessage
 from src.llm import llm
 from src.state import SwarmState
@@ -12,6 +13,7 @@ def judge_agent(state: SwarmState):
     """
     print("\n--- JUDGE AGENT ---")
     
+    time.sleep(5)  # Simulate processing time
     # 1. Prepare Data
     code_to_test = state["code"]
     filename = os.path.basename(state.get("target_file", "script.py"))
