@@ -105,57 +105,70 @@ app = workflow.compile()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--target_dir", required=True, help="Directory containing the buggy code")
+    parser.add_argument("--target_file", help="Single Python file to refactor")
+    parser.add_argument("--target_dir", help="Directory containing Python files")
     args = parser.parse_args()
 
-    # 1. Validation
-    if not os.path.isdir(args.target_dir):
-        print(f"❌ ERROR: Directory '{args.target_dir}' not found.")
+    if not args.target_file and not args.target_dir:
+        print("❌ ERROR: Provide --target_file or --target_dir")
         exit(1)
 
-    # 2. File Discovery (Enhanced)
-    search_path = os.path.join(args.target_dir, "*.py")
-    found_files = glob.glob(search_path)
-    
-    # Filter out test files so we don't try to refactor the tests themselves!
-    code_files = [f for f in found_files if "test_" not in os.path.basename(f)]
+    # -----------------------------------------------------
+    # TARGET RESOLUTION (UNIQUE SOURCE OF TRUTH)
+    # -----------------------------------------------------
 
-    if not code_files:
-        print(f"❌ ERROR: No suitable .py files found in {args.target_dir}")
-        exit(1)
-        
-    target_file = code_files[0] # Pick the first non-test file
-    print(f"🎯 Target File: {target_file}")
+    if args.target_file:
+        if not os.path.isfile(args.target_file):
+            print(f"❌ ERROR: File '{args.target_file}' not found.")
+            exit(1)
+        code_files = [args.target_file]
 
-    # 3. Read Original Code
-    with open(target_file, "r", encoding='utf-8') as f:
-        original_code = f.read()
+    else:  # target_dir
+        if not os.path.isdir(args.target_dir):
+            print(f"❌ ERROR: Directory '{args.target_dir}' not found.")
+            exit(1)
 
-    # 4. Initialize State
-    # We added 'target_file' to state so the Fixer knows where to save.
-    initial_state = {
-        "target_dir": args.target_dir,
-        "target_file": target_file,
-        "code": original_code, 
-        "refactoring_plan": "",
-        "error_logs": "",
-        "iterations": 0,
-        "success": False
-    }
+        search_path = os.path.join(args.target_dir, "*.py")
+        found_files = glob.glob(search_path)
 
-    print(f"\n🚀 STARTING REFACTORING SWARM...")
-    
-    try:
-        final_state = app.invoke(initial_state)
-        
-        print("\n------------------------------------------------")
-        if final_state["success"]:
-            print("🏆 MISSION SUCCESS: The code has been fixed and tested.")
-        else:
-            print("💀 MISSION FAILED: Could not fix the code within the limit.")
-            
-        print("📝 Check 'logs/experiment_data.json' for scientific data.")
-        print("------------------------------------------------")
-        
-    except Exception as e:
-        print(f"\n❌ SYSTEM CRASH: {e}")
+        code_files = [
+            f for f in found_files
+            if not os.path.basename(f).startswith("test_")
+        ]
+
+        if not code_files:
+            print(f"❌ ERROR: No suitable .py files found in {args.target_dir}")
+            exit(1)
+
+    # -----------------------------------------------------
+    # EXECUTION LOOP (1 FILE = 1 SWARM)
+    # -----------------------------------------------------
+
+    for target_file in code_files:
+        print(f"\n🎯 Target File: {target_file}")
+
+        with open(target_file, "r", encoding="utf-8") as f:
+            original_code = f.read()
+
+        initial_state = {
+            "target_dir": os.path.dirname(target_file),
+            "target_file": target_file,
+            "code": original_code,
+            "refactoring_plan": "",
+            "error_logs": "",
+            "iterations": 0,
+            "success": False
+        }
+
+        print("\n🚀 STARTING REFACTORING SWARM...")
+
+        try:
+            final_state = app.invoke(initial_state)
+
+            if final_state.get("success"):
+                print(f"🏆 SUCCESS: {os.path.basename(target_file)} fixed")
+            else:
+                print(f"💀 FAILED: {os.path.basename(target_file)}")
+
+        except Exception as e:
+            print(f"\n❌ SYSTEM CRASH on {target_file}: {e}")
